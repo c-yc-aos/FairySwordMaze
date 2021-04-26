@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>阳名百纳貮 迷宫 穷举路线</title>
+</head>
+<body>
+</body>
+<script type="text/javascript">
+	let START = 1 , NORMAL = 2 , END = 3 ;//map类型
+	//先标定场景值
+	let map = [
+		{
+			type:START ,
+		},
+		{
+			type:NORMAL,
+		},
+		{
+			type:NORMAL,
+		},
+		{
+			type:NORMAL,
+		},
+		{
+			type:NORMAL,
+		},
+		{
+			type:NORMAL,
+		},
+		{
+			type:NORMAL,
+		},
+		{
+			type:NORMAL,
+		},
+		{
+			type:NORMAL,
+		},
+		{
+			type:NORMAL,
+		},
+		{
+			type:END,
+		},
+	];///地图数据 type 来代表落脚点的类型。  
+	let boat = [
+		{
+			links :[[0,8]],
+			ferry : false , 
+		},
+		{
+			links :[[8,9],[7,8]],
+			ferry : false , 
+		},
+		{
+			links :[[8,5],[5,2]],
+			ferry : false , 
+		},
+		{
+			links :[[5,8],[2,5]],
+			ferry : false , 
+		},
+		{
+			links :[[9,6],[7,4]],
+			ferry : false , 
+		},
+		{
+			links :[[9,6],[7,1]],
+			ferry : false , 
+		},
+		{
+			links :[[6,5],[5,4]],
+			ferry : false , 
+		},
+		{
+			links :[[3,2],[2,1]],
+			ferry : false , 
+		},
+		{
+			links :[[3,6],[1,4]],
+			ferry : false , 
+		},
+		{
+			links :[[3,10]],
+			ferry :false , 
+		},
+	];//船 link 代表船所关联的落脚点下标， ferry 代表船当前的摆渡状态。
+	/**
+	 * [run description]
+	 * @param  {[type]} number   [description]
+	 * @param  {[type]} max      [description]
+	 * @param  {[type]} mapIndex [description]
+	 * @param  {[type]} tboat    [description]
+	 * @param  {[type]} desc     [description]
+	 * @return {[type]}          [description]
+	 */
+	function run ( number , max , mapIndex , tboat , desc , ferrys ) {
+		tboat = JSON.parse(tboat);//先拆包当前的船信息;
+		number += 1;
+		mapIndex = 
+			tboat[ferrys[0]].
+				links[ferrys[1]][
+					(tboat[ferrys[0]].ferry = !tboat[ferrys[0]].ferry) ?  1 : 0
+				]; /// 角色到达上一层指定的目的地。
+		if (map[mapIndex].type == END){//检测目的地是否是终点
+			return console.log(desc + " --到达终点-- 步数：" + number );
+		}
+		if(number > max) {
+			// return console.log(desc + " --未能到达终点-- 步数：" + number );
+			// document.write("未能到达终点 \n");
+			return ;
+		}
+		let strBoat = JSON.stringify(tboat);
+		for (var i = tboat.length - 1; i >= 0; i--) {
+			for (var j = tboat[i].links.length -1 ; j >= 0 ; j -- ){
+				if( ( i != ferrys[0] || j != ferrys[1] )
+				 && tboat[i].
+						links[j][ 
+							(tboat[i].ferry ? 1 : 0) ] 
+						== mapIndex){
+					run(number,max , mapIndex ,strBoat,
+						desc +" 从 "+(mapIndex+1)+" 通过 "+(i+1)+" "+ (j+1) +" 向 "+(tboat[i].links[j][tboat[i].ferry ? 0 : 1 ] +1) + "移动了一步。 \n",[i,j])
+				}
+			}
+		}
+	}
+	run(0,15,0,JSON.stringify(boat), "\n从起点出发了。 走向9 \n",[0,0] )
+
+
+</script>
+</html>
